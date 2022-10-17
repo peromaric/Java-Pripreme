@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Glavna {
 
     private static final Integer BROJ_PROFESORA = 2;
-    private static final Integer BROJ_ISPITA = 1;
+    private static final Integer BROJ_ISPITA = 2;
     private static final Integer BROJ_PREDMETA = 3;
 
     public static void main(String[] args) {
