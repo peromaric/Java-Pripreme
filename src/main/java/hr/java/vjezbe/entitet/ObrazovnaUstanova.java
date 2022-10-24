@@ -8,9 +8,11 @@ public abstract class ObrazovnaUstanova {
     private Student[] studenti;
     private Ispit[] ispiti;
 
-    public ObrazovnaUstanova(String naziv, Predmet[] predmeti,
-                             Profesor[] profesori, Student[] studenti,
-                             Ispit[] ispiti) {
+    public ObrazovnaUstanova(
+            String naziv, Predmet[] predmeti,
+            Profesor[] profesori, Student[] studenti,
+            Ispit[] ispiti
+    ) {
         this.naziv = naziv;
         this.predmeti = predmeti;
         this.profesori = profesori;
