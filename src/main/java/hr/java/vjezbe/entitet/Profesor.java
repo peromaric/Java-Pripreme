@@ -13,6 +13,10 @@ public class Profesor extends Osoba{
         this.titula = titula;
     }
 
+    private Profesor() {
+        super("", "");
+    }
+
     public static Profesor inputProfesor(Scanner scanner) {
         String sifra;
         String ime;
@@ -32,6 +36,47 @@ public class Profesor extends Osoba{
         titula = scanner.nextLine();
 
         return new Profesor(sifra, ime, prezime, titula);
+    }
+
+    public static class Builder {
+
+        private String sifra;
+        private String ime;
+        private String prezime;
+        private String titula;
+
+        public Builder(String sifra) {
+            this.sifra = sifra;
+        }
+
+        public Builder withIme(String ime) {
+            this.ime = ime;
+            return this;
+        }
+
+        public Builder withPrezime(String prezime) {
+            this.prezime = prezime;
+
+            return this;
+        }
+
+        public Builder withTitula(String titula) {
+            this.titula = titula;
+
+            return this;
+        }
+
+        public Profesor build() {
+            Profesor profesor = new Profesor();
+            profesor.sifra = this.sifra;
+            profesor.setIme(this.ime);
+            profesor.setPrezime(this.prezime);
+            profesor.titula = this.titula;
+
+            return profesor;
+        }
+
+
     }
 
     public String getSifra() {
