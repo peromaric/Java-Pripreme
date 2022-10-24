@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-public class Ispit {
+public final class Ispit implements Online{
 
     private Predmet predmet;
     private Student student;
     private Integer ocjena;
     private LocalDateTime datumIVrijeme;
+    private Dvorana dvorana;
+    private String nazivSoftvera;
 
     public Ispit(Predmet predmet, Student student, Integer ocjena, LocalDateTime datumIVrijeme) {
         this.predmet = predmet;
@@ -46,6 +48,10 @@ public class Ispit {
                 DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm"));
 
         return new Ispit(predmet, student, ocjena, datumIVrijeme);
+    }
+
+    public void inputNazivSoftvera(String nazivSoftvera) {
+        this.nazivSoftvera = nazivSoftvera;
     }
 
     public Predmet getPredmet() {
