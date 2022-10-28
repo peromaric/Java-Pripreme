@@ -35,7 +35,11 @@ public class Profesor extends Osoba{
         System.out.print("Unesite titulu profesora: ");
         titula = scanner.nextLine();
 
-        return new Profesor(sifra, ime, prezime, titula);
+        return new Builder(sifra)
+                .withIme(ime)
+                .withPrezime(prezime)
+                .withTitula(titula)
+                .build();
     }
 
     public static class Builder {

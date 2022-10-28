@@ -11,7 +11,7 @@ public class Glavna {
 
     private static final Integer BROJ_PROFESORA = 2;
     private static final Integer BROJ_ISPITA = 2;
-    private static final Integer BROJ_PREDMETA = 3;
+    private static final Integer BROJ_PREDMETA = 2;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -19,31 +19,33 @@ public class Glavna {
         Predmet[] predmeti = new Predmet[BROJ_PREDMETA];
         Ispit[] ispiti = new Ispit[BROJ_ISPITA];
         Student[] studenti;
-        Integer ukupanBrojStudenata = 0;
         int brojObrazovnihUstanova = 0;
 
         System.out.print("Unesite broj obrazovnih ustanova: ");
         brojObrazovnihUstanova = Integer.parseInt(scanner.nextLine());
 
         for(int j = 0; j < brojObrazovnihUstanova; j++) {
+            System.out.printf("Unesite podatke za %d. obrazovnu ustanovu\n", j + 1);
             for(int i = 0; i < BROJ_PROFESORA; i++) {
                 System.out.printf("Unos %d. profesora\n", i + 1);
                 profesori[i] = Profesor.inputProfesor(scanner);
+            }
+
+            System.out.print("Unesite ukupan broj studenata na obrazovnoj ustanovi: ");
+            int ukupanBrojStudenata = Integer.parseInt(scanner.nextLine());
+            studenti = new Student[ukupanBrojStudenata];
+            for(int i = 0; i < studenti.length; i++) {
+                System.out.printf("Unesite %d. studenta\n", i + 1);
+                studenti[i] = Student.inputStudent(scanner);
             }
 
             for(int i = 0; i < BROJ_PREDMETA; i++) {
                 System.out.printf("Unos %d. predmeta\n", i + 1);
                 predmeti[i] = Predmet.inputPredmet(scanner, profesori);
                 System.out.printf("Unesite broj studenata na predmetu '%s':", predmeti[i].getNaziv());
-                Integer brojStudenata = Integer.parseInt(scanner.nextLine());
-                ukupanBrojStudenata += brojStudenata;
+                int brojStudenata = Integer.parseInt(scanner.nextLine());
                 predmeti[i].setStudenti(new Student[brojStudenata]);
-            }
-
-            studenti = new Student[ukupanBrojStudenata];
-            for(int i = 0; i < studenti.length; i++) {
-                System.out.printf("Unesite %d. studenta\n", i + 1);
-                studenti[i] = Student.inputStudent(scanner);
+                predmeti[i].inputStudenti(scanner, studenti);
             }
 
             for(int i = 0; i < BROJ_ISPITA; i++) {

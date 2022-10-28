@@ -25,13 +25,21 @@ public final class Ispit implements Online{
         Student student;
         Integer ocjena;
         LocalDateTime datumIVrijeme;
+        String nazivDvorane;
+        String zgradaDvorane;
 
+        System.out.println("Odaberite predmet:");
         for (int i = 0; i < predmeti.length; i++) {
             System.out.printf("%d. %s\n", i + 1, predmeti[i].getNaziv());
         }
         System.out.print("Odabir >>> ");
         Integer odabir = Integer.parseInt(scanner.nextLine());
         predmet = predmeti[odabir-1];
+
+        System.out.print("Unesite naziv dvorane: ");
+        nazivDvorane = scanner.nextLine();
+        System.out.print("Unesite zgradu dvorane: ");
+        zgradaDvorane = scanner.nextLine();
 
         for (int i = 0; i < studenti.length; i++) {
             System.out.printf("%d. %s %s\n", i + 1, studenti[i].getIme(), studenti[i].getPrezime());
@@ -47,11 +55,21 @@ public final class Ispit implements Online{
         datumIVrijeme = LocalDateTime.parse(scanner.nextLine(),
                 DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm"));
 
-        return new Ispit(predmet, student, ocjena, datumIVrijeme);
+        Ispit ispit = new Ispit(predmet, student, ocjena, datumIVrijeme);
+        ispit.setDvorana(new Dvorana(nazivDvorane, zgradaDvorane));
+        return ispit;
     }
 
     public void inputNazivSoftvera(String nazivSoftvera) {
         this.nazivSoftvera = nazivSoftvera;
+    }
+
+    public Dvorana getDvorana() {
+        return dvorana;
+    }
+
+    public void setDvorana(Dvorana dvorana) {
+        this.dvorana = dvorana;
     }
 
     public Predmet getPredmet() {
