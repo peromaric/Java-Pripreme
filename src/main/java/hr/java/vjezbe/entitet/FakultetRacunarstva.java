@@ -5,8 +5,8 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska {
-    public VeleucilisteJave(
+public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski {
+    public FakultetRacunarstva(
             String naziv,
             Predmet[] predmeti,
             Profesor[] profesori,
@@ -19,6 +19,37 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
     @Override
     public Student odrediNajuspjesnijegStudentaNaGodini(Integer godina) {
         Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
+
+        int najveciBrojIzvrsnoOcijenjenihIspita = 0;
+        for(Student student : this.getStudenti()) {
+            Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(
+                    this.getIspiti(), student
+            );
+
+            int brojIzvrsnoOcijenjenihIspitaStudenta = odrediBrojIzvrsnoOcijenjenihIspita(ispitiStudenta);
+            if(brojIzvrsnoOcijenjenihIspitaStudenta > najveciBrojIzvrsnoOcijenjenihIspita) {
+                najuspjesnijiStudent = student;
+            }
+        }
+
+        return najuspjesnijiStudent;
+    }
+
+    private int odrediBrojIzvrsnoOcijenjenihIspita(Ispit[] ispiti) {
+        int brojIzvrsnoOcijenjenihIspita = 0;
+
+        for(Ispit ispit : ispiti) {
+            if(ispit.getOcjena() == 5) {
+                brojIzvrsnoOcijenjenihIspita ++;
+            }
+        }
+
+        return brojIzvrsnoOcijenjenihIspita;
+    }
+
+    @Override
+    public Student odrediStudentaZaRektorovuNagradu() {
+        Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
         BigDecimal najboljiProsjek = BigDecimal.valueOf(0);
 
         for(Student student : this.getStudenti()) {
@@ -27,8 +58,12 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
             );
 
             BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
-            if(prosjek.compareTo(najboljiProsjek) >= 0) {
+            if(prosjek.compareTo(najboljiProsjek) > 0) {
                 najuspjesnijiStudent = student;
+            } else if (prosjek.compareTo(najboljiProsjek) == 0) {
+                if(student.getDatumRodjenja().isBefore(najuspjesnijiStudent.getDatumRodjenja())) {
+                    najuspjesnijiStudent = student;
+                }
             }
         }
 
@@ -38,12 +73,11 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
     @Override
     public BigDecimal izracunajKonacnuOcjenuStudijaZaStudenta(
             Ispit[] ispitiStudenta,
-            int ocjenaZavrsnogRada,
-            int ocjenaObraneRada
-    ) {
+            int ocjenaDiplomskogRada,
+            int ocjenaObraneRada) {
         BigDecimal prosjekOcjena = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
         BigDecimal konacnaOcjena = BigDecimal.valueOf(
-                ((prosjekOcjena.doubleValue() * 2) + ocjenaObraneRada + ocjenaZavrsnogRada) / 4
+                ((prosjekOcjena.doubleValue() * 3) + ocjenaObraneRada + ocjenaDiplomskogRada) / 5
         );
         return konacnaOcjena.round(new MathContext(1));
     }
@@ -52,37 +86,31 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
             Scanner scanner
     ) {
         for(Student student : getStudenti()) {
-            System.out.printf("Unesite ocjenu završnog rada studenta %s %s: ",
+            System.out.printf("Unesite ocjenu završnog rada studenta %s %s",
                     student.getIme(), student.getPrezime()
             );
             int ocjenaZavrsnogRada = Integer.parseInt(scanner.nextLine());
 
 
-            System.out.printf("Unesite ocjenu obrane rada studenta %s %s: ",
+            System.out.printf("Unesite ocjenu obrane rada studenta %s %s",
                     student.getIme(), student.getPrezime()
             );
             int ocjenaObraneRada = Integer.parseInt(scanner.nextLine());
 
             Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
-            if(ispitiStudenta.length > 0) {
-                BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
-                        ispitiStudenta,
-                        ocjenaZavrsnogRada,
-                        ocjenaObraneRada
-                );
-                System.out.println("Konačna ocjena: " + konacnaOcjena);
-            } else {
-                System.out.println("Student nije pisao niti jedan ispit.");
-            }
+            BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
+                    ispitiStudenta,
+                    ocjenaZavrsnogRada,
+                    ocjenaObraneRada
+            );
 
-
-
+            System.out.println("Konačna ocjena: " + konacnaOcjena);
         }
     }
 
-    public static class BuilderVeleuciliste extends Builder {
+    public static class BuilderFakultetRacunarstva extends Builder {
 
-        public BuilderVeleuciliste(Builder builder) {
+        public BuilderFakultetRacunarstva(Builder builder) {
             super(
                     builder.getNaziv(),
                     builder.getPredmeti(),
@@ -91,9 +119,8 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
                     builder.getIspiti()
             );
         }
-
-        public VeleucilisteJave build() {
-            return new VeleucilisteJave(
+        public FakultetRacunarstva build() {
+            return new FakultetRacunarstva(
                     this.getNaziv(),
                     this.getPredmeti(),
                     this.getProfesori(),
