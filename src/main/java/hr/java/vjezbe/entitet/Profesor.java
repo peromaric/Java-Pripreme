@@ -2,18 +2,19 @@ package hr.java.vjezbe.entitet;
 
 import java.util.Scanner;
 
-public class Profesor {
+public class Profesor extends Osoba{
 
     private String sifra;
-    private String ime;
-    private String prezime;
     private String titula;
 
     public Profesor(String sifra, String ime, String prezime, String titula) {
+        super(ime, prezime);
         this.sifra = sifra;
-        this.ime = ime;
-        this.prezime = prezime;
         this.titula = titula;
+    }
+
+    private Profesor() {
+        super("", "");
     }
 
     public static Profesor inputProfesor(Scanner scanner) {
@@ -34,7 +35,52 @@ public class Profesor {
         System.out.print("Unesite titulu profesora: ");
         titula = scanner.nextLine();
 
-        return new Profesor(sifra, ime, prezime, titula);
+        return new Builder(sifra)
+                .withIme(ime)
+                .withPrezime(prezime)
+                .withTitula(titula)
+                .build();
+    }
+
+    public static class Builder {
+
+        private String sifra;
+        private String ime;
+        private String prezime;
+        private String titula;
+
+        public Builder(String sifra) {
+            this.sifra = sifra;
+        }
+
+        public Builder withIme(String ime) {
+            this.ime = ime;
+            return this;
+        }
+
+        public Builder withPrezime(String prezime) {
+            this.prezime = prezime;
+
+            return this;
+        }
+
+        public Builder withTitula(String titula) {
+            this.titula = titula;
+
+            return this;
+        }
+
+        public Profesor build() {
+            Profesor profesor = new Profesor();
+            profesor.sifra = this.sifra;
+            profesor.setIme(this.ime);
+            profesor.setPrezime(this.prezime);
+            profesor.titula = this.titula;
+
+            return profesor;
+        }
+
+
     }
 
     public String getSifra() {
@@ -43,22 +89,6 @@ public class Profesor {
 
     public void setSifra(String sifra) {
         this.sifra = sifra;
-    }
-
-    public String getIme() {
-        return ime;
-    }
-
-    public void setIme(String ime) {
-        this.ime = ime;
-    }
-
-    public String getPrezime() {
-        return prezime;
-    }
-
-    public void setPrezime(String prezime) {
-        this.prezime = prezime;
     }
 
     public String getTitula() {

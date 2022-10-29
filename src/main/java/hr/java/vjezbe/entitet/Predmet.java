@@ -42,6 +42,24 @@ public class Predmet {
 
         return new Predmet(sifra, naziv, brojEctsBodova, nositelj);
     }
+    
+    public void inputStudenti(Scanner scanner, Student[] sviStudenti) {
+        Student[] studenti = this.getStudenti();
+
+        System.out.printf("Odaberite studente koji su upisali %s:\n", this.getNaziv());
+        for(int i = 0; i < studenti.length; i++) {
+            for(int j = 0; j < sviStudenti.length; j++) {
+                System.out.printf("%d. %s %s\n",
+                        j + 1,
+                        sviStudenti[j].getIme(),
+                        sviStudenti[j].getPrezime()
+                );
+            }
+            System.out.print("Odabir >>> ");
+            int odabir = Integer.parseInt(scanner.nextLine());
+            studenti[i] = sviStudenti[odabir - 1];
+        }
+    }
 
     public String getSifra() {
         return sifra;
