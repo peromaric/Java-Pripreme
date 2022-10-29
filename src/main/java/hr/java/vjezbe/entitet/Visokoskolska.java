@@ -38,7 +38,20 @@ public interface Visokoskolska {
         }
 
         return polozeniIspiti;
-    };
+    }
+
+    default Ispit[] filtrirajIspitePoGodini(Ispit[] ispiti, int godina){
+        Ispit[] ispitiTeGodine = new Ispit[0];
+
+        for(Ispit ispit : ispiti) {
+            if(ispit.getDatumIVrijeme().getYear() == godina) {
+                ispitiTeGodine = Arrays.copyOf(ispitiTeGodine, ispitiTeGodine.length + 1);
+                ispitiTeGodine[ispitiTeGodine.length - 1] = ispit;
+            }
+        }
+
+        return ispitiTeGodine;
+    }
 
     default Ispit[] filtrirajIspitePoStudentu(Ispit[] ispiti, Student student) {
         Ispit[] ispitiStudenta = new Ispit[0];

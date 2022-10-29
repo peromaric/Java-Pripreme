@@ -26,9 +26,17 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
                     this.getIspiti(), student
             );
 
-            int brojIzvrsnoOcijenjenihIspitaStudenta = odrediBrojIzvrsnoOcijenjenihIspita(ispitiStudenta);
-            if(brojIzvrsnoOcijenjenihIspitaStudenta > najveciBrojIzvrsnoOcijenjenihIspita) {
-                najuspjesnijiStudent = student;
+            if(ispitiStudenta.length > 0) {
+                Ispit[] ispitiStudentaZaTuGodinu = filtrirajIspitePoGodini(ispitiStudenta, godina);
+                if(ispitiStudentaZaTuGodinu.length > 0) {
+                    int brojIzvrsnoOcijenjenihIspitaStudenta =
+                            odrediBrojIzvrsnoOcijenjenihIspita(ispitiStudentaZaTuGodinu);
+                    if (
+                            brojIzvrsnoOcijenjenihIspitaStudenta > najveciBrojIzvrsnoOcijenjenihIspita
+                    ) {
+                        najuspjesnijiStudent = student;
+                    }
+                }
             }
         }
 
@@ -56,13 +64,14 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
             Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(
                     this.getIspiti(), student
             );
-
-            BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
-            if(prosjek.compareTo(najboljiProsjek) > 0) {
-                najuspjesnijiStudent = student;
-            } else if (prosjek.compareTo(najboljiProsjek) == 0) {
-                if(student.getDatumRodjenja().isBefore(najuspjesnijiStudent.getDatumRodjenja())) {
+            if(ispitiStudenta.length > 0) {
+                BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
+                if(prosjek.compareTo(najboljiProsjek) > 0) {
                     najuspjesnijiStudent = student;
+                } else if (prosjek.compareTo(najboljiProsjek) == 0) {
+                    if(student.getDatumRodjenja().isBefore(najuspjesnijiStudent.getDatumRodjenja())) {
+                        najuspjesnijiStudent = student;
+                    }
                 }
             }
         }
@@ -86,25 +95,49 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
             Scanner scanner
     ) {
         for(Student student : getStudenti()) {
-            System.out.printf("Unesite ocjenu završnog rada studenta %s %s",
+            System.out.printf("Unesite ocjenu završnog rada studenta %s %s: ",
                     student.getIme(), student.getPrezime()
             );
-            int ocjenaZavrsnogRada = Integer.parseInt(scanner.nextLine());
+            int ocjenaDiplomskogRada = Integer.parseInt(scanner.nextLine());
 
 
-            System.out.printf("Unesite ocjenu obrane rada studenta %s %s",
+            System.out.printf("Unesite ocjenu obrane rada studenta %s %s: ",
                     student.getIme(), student.getPrezime()
             );
             int ocjenaObraneRada = Integer.parseInt(scanner.nextLine());
 
             Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
-            BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
-                    ispitiStudenta,
-                    ocjenaZavrsnogRada,
-                    ocjenaObraneRada
-            );
+            if(ispitiStudenta.length > 0) {
+                BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
+                        ispitiStudenta,
+                        ocjenaDiplomskogRada,
+                        ocjenaObraneRada
+                );
+                System.out.println("Konačna ocjena: " + konacnaOcjena);
+            } else {
+                System.out.println("Student nije pisao niti jedan ispit.");
+            }
+        }
 
-            System.out.println("Konačna ocjena: " + konacnaOcjena);
+        Student dobitnikRektorove = odrediStudentaZaRektorovuNagradu();
+        System.out.printf(
+                "Dobitnik rektorove nagrada je %s %s!\n",
+                dobitnikRektorove.getIme(),
+                dobitnikRektorove.getPrezime()
+        );
+
+        System.out.print("Unesi godinu za koju Vas zanima najuspješniji student: ");
+        int godina = Integer.parseInt(scanner.nextLine());
+
+        Student najuspjesnijiStudentGodine = odrediNajuspjesnijegStudentaNaGodini(godina);
+        if(najuspjesnijiStudentGodine.getDatumRodjenja().isEqual(LocalDate.MIN)) {
+            System.out.println("Za tu godinu nema ispisa - nema dovoljno podataka.");
+        } else {
+            System.out.printf("Najuspješniji student %d. godine je %s %s.",
+                    godina,
+                    najuspjesnijiStudentGodine.getIme(),
+                    najuspjesnijiStudentGodine.getPrezime()
+            );
         }
     }
 

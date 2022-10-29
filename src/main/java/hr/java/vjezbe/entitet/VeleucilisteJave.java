@@ -25,10 +25,11 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
             Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(
                     this.getIspiti(), student
             );
-
-            BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
-            if(prosjek.compareTo(najboljiProsjek) >= 0) {
-                najuspjesnijiStudent = student;
+            if(ispitiStudenta.length > 0) {
+                BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
+                if(prosjek.compareTo(najboljiProsjek) >= 0) {
+                    najuspjesnijiStudent = student;
+                }
             }
         }
 
@@ -74,10 +75,13 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
             } else {
                 System.out.println("Student nije pisao niti jedan ispit.");
             }
-
-
-
         }
+
+        Student najuspjesnijiStudent = odrediNajuspjesnijegStudentaNaGodini(2022);
+        System.out.println("Najuspjesniji student na ovom studiju je" + " " +
+                    najuspjesnijiStudent.getIme() + " " +
+                    najuspjesnijiStudent.getPrezime()
+                );
     }
 
     public static class BuilderVeleuciliste extends Builder {
