@@ -63,10 +63,8 @@ public interface Visokoskolska {
         Ispit[] ispitiStudenta = new Ispit[0];
 
         for(Ispit ispit : ispiti) {
-            if(ispit.getOcjena() > 1 && ispit.getStudent().getJmbag().equals(student.getJmbag())) {
-                ispitiStudenta = Arrays.copyOf(ispitiStudenta, ispitiStudenta.length + 1);
-                ispitiStudenta[ispitiStudenta.length - 1] = ispit;
-            }
+            ispitiStudenta = Arrays.copyOf(ispitiStudenta, ispitiStudenta.length + 1);
+            ispitiStudenta[ispitiStudenta.length - 1] = ispit;
         }
 
         return ispitiStudenta;

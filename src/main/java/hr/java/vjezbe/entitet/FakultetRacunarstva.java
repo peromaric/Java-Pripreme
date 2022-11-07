@@ -10,7 +10,7 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski {
+public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski, Unos {
 
     private static final Logger logger = LoggerFactory.getLogger(FakultetRacunarstva.class);
     public FakultetRacunarstva(
@@ -111,16 +111,19 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
     ) {
         for(Student student : getStudenti()) {
             try {
-                System.out.printf("Unesite ocjenu završnog rada studenta %s %s: ",
-                        student.getIme(), student.getPrezime()
-                );
-                int ocjenaDiplomskogRada = Integer.parseInt(scanner.nextLine());
+                String poruka;
+
+                poruka = "Unesite ocjenu završnog rada studenta "
+                        + student.getIme() + " "
+                        + student.getPrezime();
+
+                int ocjenaDiplomskogRada = Unos.unosIntegera(scanner, poruka);
 
 
-                System.out.printf("Unesite ocjenu obrane rada studenta %s %s: ",
-                        student.getIme(), student.getPrezime()
-                );
-                int ocjenaObraneRada = Integer.parseInt(scanner.nextLine());
+                poruka = "Unesite ocjenu obrane rada studenta "
+                        + student.getIme() + " "
+                        + student.getPrezime();
+                int ocjenaObraneRada = Unos.unosIntegera(scanner, poruka);
 
                 Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
                 if (ispitiStudenta.length > 0) {
@@ -134,7 +137,10 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
                     System.out.println("Student nije pisao niti jedan ispit.");
                 }
             } catch (NemoguceOdreditiProsjekStudentaException ex) {
-
+                logger.debug("Nemoguće odrediti prosjek ocjena za studenta "
+                        + student.getIme() + " "
+                        + student.getPrezime()
+                );
             }
         }
 
@@ -145,8 +151,10 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
                 dobitnikRektorove.getPrezime()
         );
 
-        System.out.print("Unesi godinu za koju Vas zanima najuspješniji student: ");
-        int godina = Integer.parseInt(scanner.nextLine());
+        int godina = Unos.unosIntegera(
+                scanner,
+                "Unesi godinu za koju Vas zanima najuspješniji student: "
+        );
 
         Student najuspjesnijiStudentGodine = odrediNajuspjesnijegStudentaNaGodini(godina);
         if(najuspjesnijiStudentGodine.getDatumRodjenja().isEqual(LocalDate.MIN)) {

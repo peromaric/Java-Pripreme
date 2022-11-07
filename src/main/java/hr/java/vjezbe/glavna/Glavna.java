@@ -6,20 +6,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
-public class Glavna {
+public class Glavna implements Unos {
 
     private static final Logger logger = LoggerFactory.getLogger(Glavna.class);
 
-    private static final Integer BROJ_PROFESORA = 2;
+    private static final Integer BROJ_PROFESORA = 1;
     private static final Integer BROJ_ISPITA = 2;
-    private static final Integer BROJ_PREDMETA = 2;
+    private static final Integer BROJ_PREDMETA = 1;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int brojObrazovnihUstanova = 0;
 
-        System.out.print("Unesite broj obrazovnih ustanova: ");
-        brojObrazovnihUstanova = Integer.parseInt(scanner.nextLine());
+        int brojObrazovnihUstanova = Unos.unosIntegera(scanner, "Unesite broj obrazovnih ustanova");
         ObrazovnaUstanova[] obrazovneUstanove = new ObrazovnaUstanova[brojObrazovnihUstanova];
 
         for(int j = 0; j < brojObrazovnihUstanova; j++) {
@@ -41,8 +39,10 @@ public class Glavna {
             }
             obrazovnaUstanovaBuilder.withProfesori(profesori);
 
-            System.out.print("Unesite ukupan broj studenata na obrazovnoj ustanovi: ");
-            int ukupanBrojStudenata = Integer.parseInt(scanner.nextLine());
+            int ukupanBrojStudenata = Unos.unosIntegera(
+                    scanner,
+                    "Unesite ukupan broj studenata na obrazovnoj ustanovi: "
+            );
             studenti = new Student[ukupanBrojStudenata];
             for(int i = 0; i < studenti.length; i++) {
                 System.out.printf("Unesite %d. studenta\n", i + 1);
@@ -53,8 +53,8 @@ public class Glavna {
             for(int i = 0; i < BROJ_PREDMETA; i++) {
                 System.out.printf("Unos %d. predmeta\n", i + 1);
                 predmeti[i] = Predmet.inputPredmet(scanner, profesori);
-                System.out.printf("Unesite broj studenata na predmetu '%s':", predmeti[i].getNaziv());
-                int brojStudenata = Integer.parseInt(scanner.nextLine());
+                String poruka = "Unesite broj studenata na predmetu : " + predmeti[i].getNaziv();
+                int brojStudenata = Unos.unosIntegera(scanner, poruka);
                 predmeti[i].setStudenti(new Student[brojStudenata]);
                 predmeti[i].inputStudenti(scanner, studenti);
             }
@@ -66,10 +66,10 @@ public class Glavna {
             }
             obrazovnaUstanovaBuilder.withIspiti(ispiti);
 
-            System.out.println("Unesite tip obrazovne ustanove: 1. Veleučilište jave, 2. Fakultet računarstva");
-            System.out.print("Odabir >> ");
-            int odabir = Integer.parseInt(scanner.nextLine());
-
+            int odabir = Unos.unosIntegera(
+                    scanner,
+                    "Unesite tip obrazovne ustanove: 1. Veleučilište jave, 2. Fakultet računarstva"
+            );
             switch (odabir) {
                 case 1 -> {
                     VeleucilisteJave.BuilderVeleuciliste veleucilisteBuilder =

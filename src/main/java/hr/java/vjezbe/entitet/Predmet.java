@@ -2,7 +2,7 @@ package hr.java.vjezbe.entitet;
 
 import java.util.Scanner;
 
-public class Predmet {
+public class Predmet implements Unos{
 
     private String sifra;
     private String naziv;
@@ -20,7 +20,7 @@ public class Predmet {
     public static Predmet inputPredmet(Scanner scanner, Profesor[] profesori) {
         String sifra;
         String naziv;
-        Integer brojEctsBodova;
+        int brojEctsBodova;
         Profesor nositelj;
 
         System.out.print("Unesite šifru predmeta: ");
@@ -29,15 +29,20 @@ public class Predmet {
         System.out.print("Unesite naziv predmeta: ");
         naziv = scanner.nextLine();
 
-        System.out.printf("Unesite broj ECTS-a za predmet '%s': ", naziv);
-        brojEctsBodova = Integer.parseInt(scanner.nextLine());
+        brojEctsBodova = Unos.unosIntegera(
+                scanner,
+                "Unesite broj ECTS-a za predmet " + naziv
+        );
 
-        System.out.println("Odaberite profesora:");
-        for (int i = 0; i < profesori.length; i++) {
-            System.out.printf("%d. %s %s\n", i + 1, profesori[i].getIme(), profesori[i].getPrezime());
+        StringBuilder odabirProfesoraPorukaBuilder = new StringBuilder("Odaberite profesora:\n");
+        for (Profesor profesor : profesori) {
+            odabirProfesoraPorukaBuilder.append(profesor.getIme());
+            odabirProfesoraPorukaBuilder.append(" ");
+            odabirProfesoraPorukaBuilder.append(profesor.getPrezime());
+            odabirProfesoraPorukaBuilder.append("\n");
         }
-        System.out.print("Odabir >>> ");
-        Integer odabir = Integer.parseInt(scanner.nextLine());
+        String odabirProfesoraPoruka = odabirProfesoraPorukaBuilder.toString();
+        int odabir = Unos.unosIntegera(scanner, odabirProfesoraPoruka);
         nositelj = profesori[odabir-1];
 
         return new Predmet(sifra, naziv, brojEctsBodova, nositelj);

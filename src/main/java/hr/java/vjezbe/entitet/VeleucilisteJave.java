@@ -68,16 +68,18 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
     ) {
         for(Student student : getStudenti()) {
             try {
-                System.out.printf("Unesite ocjenu završnog rada studenta %s %s: ",
-                        student.getIme(), student.getPrezime()
-                );
-                int ocjenaZavrsnogRada = Integer.parseInt(scanner.nextLine());
+                String poruka;
+
+                poruka = "Unesite ocjenu završnog rada studenta "
+                        + student.getIme() + " "
+                        + student.getPrezime();
+                int ocjenaZavrsnogRada = Unos.unosIntegera(scanner, poruka);
 
 
-                System.out.printf("Unesite ocjenu obrane rada studenta %s %s: ",
-                        student.getIme(), student.getPrezime()
-                );
-                int ocjenaObraneRada = Integer.parseInt(scanner.nextLine());
+                poruka = "Unesite ocjenu obrane rada studenta "
+                        + student.getIme() + " "
+                        + student.getPrezime();
+                int ocjenaObraneRada = Unos.unosIntegera(scanner, poruka);
 
                 Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
                 if(ispitiStudenta.length > 0) {
