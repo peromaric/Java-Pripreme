@@ -35,11 +35,10 @@ public class Predmet implements Unos{
         );
 
         StringBuilder odabirProfesoraPorukaBuilder = new StringBuilder("Odaberite profesora:\n");
-        for (Profesor profesor : profesori) {
-            odabirProfesoraPorukaBuilder.append(profesor.getIme());
-            odabirProfesoraPorukaBuilder.append(" ");
-            odabirProfesoraPorukaBuilder.append(profesor.getPrezime());
-            odabirProfesoraPorukaBuilder.append("\n");
+        for (int i = 0; i < profesori.length; i++) {
+            odabirProfesoraPorukaBuilder.append(i+1).append(".");
+            odabirProfesoraPorukaBuilder.append(profesori[i].getIme()).append(" ");
+            odabirProfesoraPorukaBuilder.append(profesori[i].getPrezime()).append("\n");
         }
         String odabirProfesoraPoruka = odabirProfesoraPorukaBuilder.toString();
         int odabir = Unos.unosIntegera(scanner, odabirProfesoraPoruka);
