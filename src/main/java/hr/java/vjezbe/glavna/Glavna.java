@@ -1,10 +1,14 @@
 package hr.java.vjezbe.glavna;
 
 import hr.java.vjezbe.entitet.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
 public class Glavna {
+
+    private static final Logger logger = LoggerFactory.getLogger(Glavna.class);
 
     private static final Integer BROJ_PROFESORA = 2;
     private static final Integer BROJ_ISPITA = 2;

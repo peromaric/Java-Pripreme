@@ -1,5 +1,7 @@
 package hr.java.vjezbe.entitet;
 
+import hr.java.vjezbe.iznimke.NemoguceOdreditiProsjekStudentaException;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -10,17 +12,21 @@ public interface Visokoskolska {
         Ispit[] ispitiStudenta,
         int ocjenaZavrsnogRada,
         int ocjenaObraneRada
-    );
+    ) throws NemoguceOdreditiProsjekStudentaException;
 
     void ispisiPodatkeOStudiju(Scanner scanner);
 
     default BigDecimal odrediProsjekOcjenaNaIspitima(
             Ispit[] ispiti
-    ) {
-        Integer zbrojOcjena = 0;
+    ) throws NemoguceOdreditiProsjekStudentaException {
+        int zbrojOcjena = 0;
 
-        Ispit[] polozeniIspiti = filtrirajPolozeneIspite(ispiti);
-        for(Ispit ispit : polozeniIspiti) {
+        for(Ispit ispit : ispiti) {
+            if(ispit.getOcjena().compareTo(1) == 0) {
+                throw new NemoguceOdreditiProsjekStudentaException(
+                        "Nemoguće odrediti prosjek studenta!"
+                );
+            }
             zbrojOcjena += ispit.getOcjena();
         }
 

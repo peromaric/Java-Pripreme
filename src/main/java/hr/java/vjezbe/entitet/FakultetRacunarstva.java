@@ -1,11 +1,18 @@
 package hr.java.vjezbe.entitet;
 
+import hr.java.vjezbe.glavna.Glavna;
+import hr.java.vjezbe.iznimke.NemoguceOdreditiProsjekStudentaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.Scanner;
 
 public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski {
+
+    private static final Logger logger = LoggerFactory.getLogger(FakultetRacunarstva.class);
     public FakultetRacunarstva(
             String naziv,
             Predmet[] predmeti,
@@ -61,19 +68,27 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
         BigDecimal najboljiProsjek = BigDecimal.valueOf(0);
 
         for(Student student : this.getStudenti()) {
-            Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(
-                    this.getIspiti(), student
-            );
-            if(ispitiStudenta.length > 0) {
-                BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
-                if(prosjek.compareTo(najboljiProsjek) > 0) {
-                    najuspjesnijiStudent = student;
-                } else if (prosjek.compareTo(najboljiProsjek) == 0) {
-                    if(student.getDatumRodjenja().isBefore(najuspjesnijiStudent.getDatumRodjenja())) {
+            try {
+                Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(
+                        this.getIspiti(), student
+                );
+                if(ispitiStudenta.length > 0) {
+                    BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
+                    if(prosjek.compareTo(najboljiProsjek) > 0) {
                         najuspjesnijiStudent = student;
+                    } else if (prosjek.compareTo(najboljiProsjek) == 0) {
+                        if(student.getDatumRodjenja().isBefore(najuspjesnijiStudent.getDatumRodjenja())) {
+                            najuspjesnijiStudent = student;
+                        }
                     }
                 }
+            } catch (NemoguceOdreditiProsjekStudentaException ex) {
+                logger.debug("Nemoguće odrediti prosjek ocjena za studenta "
+                        + student.getIme() + " "
+                        + student.getPrezime()
+                );
             }
+
         }
 
         return najuspjesnijiStudent;
@@ -83,7 +98,7 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
     public BigDecimal izracunajKonacnuOcjenuStudijaZaStudenta(
             Ispit[] ispitiStudenta,
             int ocjenaDiplomskogRada,
-            int ocjenaObraneRada) {
+            int ocjenaObraneRada) throws NemoguceOdreditiProsjekStudentaException {
         BigDecimal prosjekOcjena = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
         BigDecimal konacnaOcjena = BigDecimal.valueOf(
                 ((prosjekOcjena.doubleValue() * 3) + ocjenaObraneRada + ocjenaDiplomskogRada) / 5
@@ -95,27 +110,31 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski 
             Scanner scanner
     ) {
         for(Student student : getStudenti()) {
-            System.out.printf("Unesite ocjenu završnog rada studenta %s %s: ",
-                    student.getIme(), student.getPrezime()
-            );
-            int ocjenaDiplomskogRada = Integer.parseInt(scanner.nextLine());
-
-
-            System.out.printf("Unesite ocjenu obrane rada studenta %s %s: ",
-                    student.getIme(), student.getPrezime()
-            );
-            int ocjenaObraneRada = Integer.parseInt(scanner.nextLine());
-
-            Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
-            if(ispitiStudenta.length > 0) {
-                BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
-                        ispitiStudenta,
-                        ocjenaDiplomskogRada,
-                        ocjenaObraneRada
+            try {
+                System.out.printf("Unesite ocjenu završnog rada studenta %s %s: ",
+                        student.getIme(), student.getPrezime()
                 );
-                System.out.println("Konačna ocjena: " + konacnaOcjena);
-            } else {
-                System.out.println("Student nije pisao niti jedan ispit.");
+                int ocjenaDiplomskogRada = Integer.parseInt(scanner.nextLine());
+
+
+                System.out.printf("Unesite ocjenu obrane rada studenta %s %s: ",
+                        student.getIme(), student.getPrezime()
+                );
+                int ocjenaObraneRada = Integer.parseInt(scanner.nextLine());
+
+                Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
+                if (ispitiStudenta.length > 0) {
+                    BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
+                            ispitiStudenta,
+                            ocjenaDiplomskogRada,
+                            ocjenaObraneRada
+                    );
+                    System.out.println("Konačna ocjena: " + konacnaOcjena);
+                } else {
+                    System.out.println("Student nije pisao niti jedan ispit.");
+                }
+            } catch (NemoguceOdreditiProsjekStudentaException ex) {
+
             }
         }
 
