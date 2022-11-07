@@ -10,8 +10,18 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+
 public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska {
     private static final Logger logger = LoggerFactory.getLogger(VeleucilisteJave.class);
+
+    /**
+     * Konstruktor klase veleuciliste jave
+     * @param naziv - string naziv, naziv veleucilista
+     * @param predmeti - svi predmeti
+     * @param profesori - svi profesori
+     * @param studenti - svi studenti
+     * @param ispiti - svi ispiti
+     */
     public VeleucilisteJave(
             String naziv,
             Predmet[] predmeti,
@@ -22,6 +32,11 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
         super(naziv, predmeti, profesori, studenti, ispiti);
     }
 
+    /**
+     * Odreduje najuspjesnijeg studenta na toj godini
+     * @param godina - integer godine
+     * @return - najuspjesnijeg studenta
+     */
     @Override
     public Student odrediNajuspjesnijegStudentaNaGodini(Integer godina) {
         Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
@@ -50,13 +65,31 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
         return najuspjesnijiStudent;
     }
 
+    /**
+     * Izracunava konacnu ocjenu studija
+     * @param ispitiStudenta - svi ispiti tog studenta
+     * @return - vraca konacnu ocjenu
+     * @throws NemoguceOdreditiProsjekStudentaException - ako student ima 1 baca gresku
+     */
     @Override
     public BigDecimal izracunajKonacnuOcjenuStudijaZaStudenta(
             Ispit[] ispitiStudenta,
-            int ocjenaZavrsnogRada,
-            int ocjenaObraneRada
+            Student student,
+            Scanner scanner
     ) throws NemoguceOdreditiProsjekStudentaException {
         BigDecimal prosjekOcjena = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
+        String poruka;
+
+        poruka = "Unesite ocjenu završnog rada studenta "
+                + student.getIme() + " "
+                + student.getPrezime();
+        int ocjenaZavrsnogRada = Unos.unosIntegera(scanner, poruka);
+
+
+        poruka = "Unesite ocjenu obrane rada studenta "
+                + student.getIme() + " "
+                + student.getPrezime();
+        int ocjenaObraneRada = Unos.unosIntegera(scanner, poruka);
         BigDecimal konacnaOcjena = BigDecimal.valueOf(
                 ((prosjekOcjena.doubleValue() * 2) + ocjenaObraneRada + ocjenaZavrsnogRada) / 4
         );
@@ -68,25 +101,14 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
     ) {
         for(Student student : getStudenti()) {
             try {
-                String poruka;
 
-                poruka = "Unesite ocjenu završnog rada studenta "
-                        + student.getIme() + " "
-                        + student.getPrezime();
-                int ocjenaZavrsnogRada = Unos.unosIntegera(scanner, poruka);
-
-
-                poruka = "Unesite ocjenu obrane rada studenta "
-                        + student.getIme() + " "
-                        + student.getPrezime();
-                int ocjenaObraneRada = Unos.unosIntegera(scanner, poruka);
 
                 Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
                 if(ispitiStudenta.length > 0) {
                     BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
                             ispitiStudenta,
-                            ocjenaZavrsnogRada,
-                            ocjenaObraneRada
+                            student,
+                            scanner
                     );
                     System.out.println("Konačna ocjena: " + konacnaOcjena);
                 } else {

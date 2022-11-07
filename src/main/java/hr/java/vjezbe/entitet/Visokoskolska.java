@@ -9,9 +9,9 @@ import java.util.Scanner;
 public interface Visokoskolska {
 
     BigDecimal izracunajKonacnuOcjenuStudijaZaStudenta(
-        Ispit[] ispitiStudenta,
-        int ocjenaZavrsnogRada,
-        int ocjenaObraneRada
+            Ispit[] ispitiStudenta,
+            Student student,
+            Scanner scanner
     ) throws NemoguceOdreditiProsjekStudentaException;
 
     void ispisiPodatkeOStudiju(Scanner scanner);

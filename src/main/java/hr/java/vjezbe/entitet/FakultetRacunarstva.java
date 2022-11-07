@@ -10,8 +10,10 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+/**
+ * Klasa koja predstavlja fakultet racunarstva
+ */
 public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski, Unos {
-
     private static final Logger logger = LoggerFactory.getLogger(FakultetRacunarstva.class);
     public FakultetRacunarstva(
             String naziv,
@@ -23,6 +25,11 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
         super(naziv, predmeti, profesori, studenti, ispiti);
     }
 
+    /**
+     * Odreduje najuspjesnijeg studenta na toj godini
+     * @param godina - integer kao godina
+     * @return - najuspjesnijeg studenta
+     */
     @Override
     public Student odrediNajuspjesnijegStudentaNaGodini(Integer godina) {
         Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
@@ -50,6 +57,11 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
         return najuspjesnijiStudent;
     }
 
+    /**
+     * Odreduje broj izvrsno ocijenjenih ispita
+     * @param ispiti - prima ispite
+     * @return vraca broj izvrsno ocijenjenih
+     */
     private int odrediBrojIzvrsnoOcijenjenihIspita(Ispit[] ispiti) {
         int brojIzvrsnoOcijenjenihIspita = 0;
 
@@ -62,6 +74,10 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
         return brojIzvrsnoOcijenjenihIspita;
     }
 
+    /**
+     * Odreduje studenta za rektorovu nagradu
+     * @return - jednog studenta koji je dobio rektorovu nagradu
+     */
     @Override
     public Student odrediStudentaZaRektorovuNagradu() {
         Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
@@ -94,49 +110,58 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
         return najuspjesnijiStudent;
     }
 
+    /**
+     * Izracunava konacnu ocjenu za studenta
+     * @param ispitiStudenta - svi ispiti studenta
+     * @return - prosjek svega
+     * @throws NemoguceOdreditiProsjekStudentaException - baca gresku ako student ima 1
+     */
     @Override
     public BigDecimal izracunajKonacnuOcjenuStudijaZaStudenta(
             Ispit[] ispitiStudenta,
-            int ocjenaDiplomskogRada,
-            int ocjenaObraneRada) throws NemoguceOdreditiProsjekStudentaException {
+            Student student,
+            Scanner scanner) throws NemoguceOdreditiProsjekStudentaException {
+        String poruka;
         BigDecimal prosjekOcjena = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
+        poruka = "Unesite ocjenu završnog rada studenta "
+                + student.getIme() + " "
+                + student.getPrezime();
+        int ocjenaDiplomskogRada = Unos.unosIntegera(scanner, poruka);
+
+
+        poruka = "Unesite ocjenu obrane rada studenta "
+                + student.getIme() + " "
+                + student.getPrezime();
+        int ocjenaObraneRada = Unos.unosIntegera(scanner, poruka);
+
         BigDecimal konacnaOcjena = BigDecimal.valueOf(
                 ((prosjekOcjena.doubleValue() * 3) + ocjenaObraneRada + ocjenaDiplomskogRada) / 5
         );
         return konacnaOcjena.round(new MathContext(1));
     }
 
+    /**
+     * Ispisuje sve podatke o cijelom studiju
+     * @param scanner - koristi za unos podataka o zavrsnom radu i obrani
+     */
     public void ispisiPodatkeOStudiju(
             Scanner scanner
     ) {
         for(Student student : getStudenti()) {
             try {
-                String poruka;
-
-                poruka = "Unesite ocjenu završnog rada studenta "
-                        + student.getIme() + " "
-                        + student.getPrezime();
-
-                int ocjenaDiplomskogRada = Unos.unosIntegera(scanner, poruka);
-
-
-                poruka = "Unesite ocjenu obrane rada studenta "
-                        + student.getIme() + " "
-                        + student.getPrezime();
-                int ocjenaObraneRada = Unos.unosIntegera(scanner, poruka);
-
                 Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
                 if (ispitiStudenta.length > 0) {
                     BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
                             ispitiStudenta,
-                            ocjenaDiplomskogRada,
-                            ocjenaObraneRada
+                            student,
+                            scanner
                     );
                     System.out.println("Konačna ocjena: " + konacnaOcjena);
                 } else {
                     System.out.println("Student nije pisao niti jedan ispit.");
                 }
             } catch (NemoguceOdreditiProsjekStudentaException ex) {
+                logger.info("Student" + student.getIme() + "ima ocjenu nedovoljan");
                 logger.debug("Nemoguće odrediti prosjek ocjena za studenta "
                         + student.getIme() + " "
                         + student.getPrezime()
@@ -145,11 +170,16 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
         }
 
         Student dobitnikRektorove = odrediStudentaZaRektorovuNagradu();
-        System.out.printf(
-                "Dobitnik rektorove nagrada je %s %s!\n",
-                dobitnikRektorove.getIme(),
-                dobitnikRektorove.getPrezime()
-        );
+        if(!dobitnikRektorove.getJmbag().isEmpty()) {
+            System.out.printf(
+                    "Dobitnik rektorove nagrada je %s %s!\n",
+                    dobitnikRektorove.getIme(),
+                    dobitnikRektorove.getPrezime()
+            );
+        } else {
+            System.out.println("Nitko nije dobio rektorovu nagradu.");
+        }
+
 
         int godina = Unos.unosIntegera(
                 scanner,
