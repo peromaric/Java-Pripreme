@@ -2,6 +2,7 @@ package hr.java.vjezbe.entitet;
 
 import hr.java.vjezbe.glavna.Glavna;
 import hr.java.vjezbe.iznimke.NemoguceOdreditiProsjekStudentaException;
+import hr.java.vjezbe.iznimke.PostojiViseNajmladihStudenataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,7 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
      * @return - jednog studenta koji je dobio rektorovu nagradu
      */
     @Override
-    public Student odrediStudentaZaRektorovuNagradu() {
+    public Student odrediStudentaZaRektorovuNagradu() throws PostojiViseNajmladihStudenataException {
         Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
         BigDecimal najboljiProsjek = BigDecimal.valueOf(0);
 
@@ -92,9 +93,12 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
                     BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
                     if(prosjek.compareTo(najboljiProsjek) > 0) {
                         najuspjesnijiStudent = student;
+                        najboljiProsjek = prosjek;
                     } else if (prosjek.compareTo(najboljiProsjek) == 0) {
                         if(student.getDatumRodjenja().isBefore(najuspjesnijiStudent.getDatumRodjenja())) {
                             najuspjesnijiStudent = student;
+                        } else if(student.getDatumRodjenja().isEqual(najuspjesnijiStudent.getDatumRodjenja())) {
+                            throw new PostojiViseNajmladihStudenataException("Postoji vise najmladih studenata");
                         }
                     }
                 }
@@ -169,17 +173,22 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
             }
         }
 
-        Student dobitnikRektorove = odrediStudentaZaRektorovuNagradu();
-        if(!dobitnikRektorove.getJmbag().isEmpty()) {
-            System.out.printf(
-                    "Dobitnik rektorove nagrada je %s %s!\n",
-                    dobitnikRektorove.getIme(),
-                    dobitnikRektorove.getPrezime()
-            );
-        } else {
-            System.out.println("Nitko nije dobio rektorovu nagradu.");
+        try {
+            Student dobitnikRektorove = odrediStudentaZaRektorovuNagradu();
+            if(!dobitnikRektorove.getJmbag().isEmpty()) {
+                System.out.printf(
+                        "Dobitnik rektorove nagrada je %s %s!\n",
+                        dobitnikRektorove.getIme(),
+                        dobitnikRektorove.getPrezime()
+                );
+            } else {
+                System.out.println("Nitko nije dobio rektorovu nagradu.");
+            }
+        } catch(PostojiViseNajmladihStudenataException ex) {
+            logger.debug(ex.toString());
+            System.out.println("Postoji vise najmladih studenata! Izlazim iz programa.");
+            System.exit(1);
         }
-
 
         int godina = Unos.unosIntegera(
                 scanner,
