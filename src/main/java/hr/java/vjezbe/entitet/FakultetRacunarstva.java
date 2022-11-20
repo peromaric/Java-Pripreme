@@ -1,6 +1,5 @@
 package hr.java.vjezbe.entitet;
 
-import hr.java.vjezbe.glavna.Glavna;
 import hr.java.vjezbe.iznimke.NemoguceOdreditiProsjekStudentaException;
 import hr.java.vjezbe.iznimke.PostojiViseNajmladihStudenataException;
 import org.slf4j.Logger;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -16,14 +16,9 @@ import java.util.Scanner;
  */
 public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski, Unos {
     private static final Logger logger = LoggerFactory.getLogger(FakultetRacunarstva.class);
-    public FakultetRacunarstva(
-            String naziv,
-            Predmet[] predmeti,
-            Profesor[] profesori,
-            Student[] studenti,
-            Ispit[] ispiti
-    ) {
-        super(naziv, predmeti, profesori, studenti, ispiti);
+
+    public FakultetRacunarstva() {
+        super();
     }
 
     /**
@@ -37,13 +32,13 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
 
         int najveciBrojIzvrsnoOcijenjenihIspita = 0;
         for(Student student : this.getStudenti()) {
-            Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(
+            List<Ispit> ispitiStudenta = filtrirajIspitePoStudentu(
                     this.getIspiti(), student
             );
 
-            if(ispitiStudenta.length > 0) {
-                Ispit[] ispitiStudentaZaTuGodinu = filtrirajIspitePoGodini(ispitiStudenta, godina);
-                if(ispitiStudentaZaTuGodinu.length > 0) {
+            if(ispitiStudenta.size() > 0) {
+                List<Ispit> ispitiStudentaZaTuGodinu = filtrirajIspitePoGodini(ispitiStudenta, godina);
+                if(ispitiStudentaZaTuGodinu.size() > 0) {
                     int brojIzvrsnoOcijenjenihIspitaStudenta =
                             odrediBrojIzvrsnoOcijenjenihIspita(ispitiStudentaZaTuGodinu);
                     if (
@@ -63,11 +58,11 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
      * @param ispiti - prima ispite
      * @return vraca broj izvrsno ocijenjenih
      */
-    private int odrediBrojIzvrsnoOcijenjenihIspita(Ispit[] ispiti) {
+    private int odrediBrojIzvrsnoOcijenjenihIspita(List<Ispit> ispiti) {
         int brojIzvrsnoOcijenjenihIspita = 0;
 
         for(Ispit ispit : ispiti) {
-            if(ispit.getOcjena() == 5) {
+            if(ispit.getOcjena().equals(Ocjena.PET)) {
                 brojIzvrsnoOcijenjenihIspita ++;
             }
         }
@@ -86,10 +81,10 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
 
         for(Student student : this.getStudenti()) {
             try {
-                Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(
+                List<Ispit> ispitiStudenta = filtrirajIspitePoStudentu(
                         this.getIspiti(), student
                 );
-                if(ispitiStudenta.length > 0) {
+                if(ispitiStudenta.size() > 0) {
                     BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
                     if(prosjek.compareTo(najboljiProsjek) > 0) {
                         najuspjesnijiStudent = student;
@@ -122,7 +117,7 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
      */
     @Override
     public BigDecimal izracunajKonacnuOcjenuStudijaZaStudenta(
-            Ispit[] ispitiStudenta,
+            List<Ispit> ispitiStudenta,
             Student student,
             Scanner scanner) throws NemoguceOdreditiProsjekStudentaException {
         String poruka;
@@ -153,8 +148,8 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
     ) {
         for(Student student : getStudenti()) {
             try {
-                Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
-                if (ispitiStudenta.length > 0) {
+                List<Ispit> ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
+                if (ispitiStudenta.size() > 0) {
                     BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
                             ispitiStudenta,
                             student,
@@ -203,28 +198,6 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
                     godina,
                     najuspjesnijiStudentGodine.getIme(),
                     najuspjesnijiStudentGodine.getPrezime()
-            );
-        }
-    }
-
-    public static class BuilderFakultetRacunarstva extends Builder {
-
-        public BuilderFakultetRacunarstva(Builder builder) {
-            super(
-                    builder.getNaziv(),
-                    builder.getPredmeti(),
-                    builder.getProfesori(),
-                    builder.getStudenti(),
-                    builder.getIspiti()
-            );
-        }
-        public FakultetRacunarstva build() {
-            return new FakultetRacunarstva(
-                    this.getNaziv(),
-                    this.getPredmeti(),
-                    this.getProfesori(),
-                    this.getStudenti(),
-                    this.getIspiti()
             );
         }
     }

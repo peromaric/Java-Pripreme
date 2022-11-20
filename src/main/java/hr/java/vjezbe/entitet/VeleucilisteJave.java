@@ -8,28 +8,15 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 
 public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska {
     private static final Logger logger = LoggerFactory.getLogger(VeleucilisteJave.class);
 
-    /**
-     * Konstruktor klase veleuciliste jave
-     * @param naziv - string naziv, naziv veleucilista
-     * @param predmeti - svi predmeti
-     * @param profesori - svi profesori
-     * @param studenti - svi studenti
-     * @param ispiti - svi ispiti
-     */
-    public VeleucilisteJave(
-            String naziv,
-            Predmet[] predmeti,
-            Profesor[] profesori,
-            Student[] studenti,
-            Ispit[] ispiti
-    ) {
-        super(naziv, predmeti, profesori, studenti, ispiti);
+    public VeleucilisteJave() {
+        super();
     }
 
     /**
@@ -44,10 +31,10 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
 
         for(Student student : this.getStudenti()) {
             try {
-                Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(
+                List<Ispit> ispitiStudenta = filtrirajIspitePoStudentu(
                         this.getIspiti(), student
                 );
-                if(ispitiStudenta.length > 0) {
+                if(ispitiStudenta.size() > 0) {
                     BigDecimal prosjek = odrediProsjekOcjenaNaIspitima(ispitiStudenta);
                     if(prosjek.compareTo(najboljiProsjek) >= 0) {
                         najuspjesnijiStudent = student;
@@ -73,7 +60,7 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
      */
     @Override
     public BigDecimal izracunajKonacnuOcjenuStudijaZaStudenta(
-            Ispit[] ispitiStudenta,
+            List<Ispit> ispitiStudenta,
             Student student,
             Scanner scanner
     ) throws NemoguceOdreditiProsjekStudentaException {
@@ -101,10 +88,8 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
     ) {
         for(Student student : getStudenti()) {
             try {
-
-
-                Ispit[] ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
-                if(ispitiStudenta.length > 0) {
+                List<Ispit> ispitiStudenta = filtrirajIspitePoStudentu(getIspiti(), student);
+                if(ispitiStudenta.size() > 0) {
                     BigDecimal konacnaOcjena = izracunajKonacnuOcjenuStudijaZaStudenta(
                             ispitiStudenta,
                             student,
@@ -128,28 +113,5 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
                     najuspjesnijiStudent.getIme() + " " +
                     najuspjesnijiStudent.getPrezime()
                 );
-    }
-
-    public static class BuilderVeleuciliste extends Builder {
-
-        public BuilderVeleuciliste(Builder builder) {
-            super(
-                    builder.getNaziv(),
-                    builder.getPredmeti(),
-                    builder.getProfesori(),
-                    builder.getStudenti(),
-                    builder.getIspiti()
-            );
-        }
-
-        public VeleucilisteJave build() {
-            return new VeleucilisteJave(
-                    this.getNaziv(),
-                    this.getPredmeti(),
-                    this.getProfesori(),
-                    this.getStudenti(),
-                    this.getIspiti()
-            );
-        }
     }
 }

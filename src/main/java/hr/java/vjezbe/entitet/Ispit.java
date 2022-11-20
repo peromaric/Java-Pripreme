@@ -2,54 +2,60 @@ package hr.java.vjezbe.entitet;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 
-public final class Ispit implements Online{
+public final class Ispit implements Online, Unos {
 
     private Predmet predmet;
     private Student student;
-    private Integer ocjena;
+    private Ocjena ocjena;
     private LocalDateTime datumIVrijeme;
     private Dvorana dvorana;
     private String nazivSoftvera;
 
-    public Ispit(Predmet predmet, Student student, Integer ocjena, LocalDateTime datumIVrijeme) {
+    public Ispit(Predmet predmet, Student student, Ocjena ocjena, LocalDateTime datumIVrijeme) {
         this.predmet = predmet;
         this.student = student;
         this.ocjena = ocjena;
         this.datumIVrijeme = datumIVrijeme;
     }
 
-    public static Ispit inputIspit(Scanner scanner, Predmet[] predmeti, Student[] studenti) {
+    public static Ispit inputIspit(Scanner scanner, List<Predmet> predmeti) {
         Predmet predmet;
         Student student;
-        Integer ocjena;
+        Ocjena ocjena;
         LocalDateTime datumIVrijeme;
         String nazivDvorane;
         String zgradaDvorane;
 
         System.out.println("Odaberite predmet:");
-        for (int i = 0; i < predmeti.length; i++) {
-            System.out.printf("%d. %s\n", i + 1, predmeti[i].getNaziv());
+        for (Predmet jedanPredmet : predmeti) {
+            System.out.printf("%d. %s\n", predmeti.indexOf(jedanPredmet) + 1, jedanPredmet.getNaziv());
         }
-        System.out.print("Odabir >>> ");
-        Integer odabir = Integer.parseInt(scanner.nextLine());
-        predmet = predmeti[odabir-1];
+        int odabir = Unos.unosIntegera(
+                scanner,
+                ""
+        );
+        predmet = predmeti.get(odabir - 1);
 
         System.out.print("Unesite naziv dvorane: ");
         nazivDvorane = scanner.nextLine();
         System.out.print("Unesite zgradu dvorane: ");
         zgradaDvorane = scanner.nextLine();
 
-        for (int i = 0; i < studenti.length; i++) {
-            System.out.printf("%d. %s %s\n", i + 1, studenti[i].getIme(), studenti[i].getPrezime());
+        List<Student> studentiPredmeta = predmet.getStudentiList();
+        for (Student _student : studentiPredmeta) {
+            System.out.printf("%d. %s %s\n",
+                    studentiPredmeta.indexOf(_student) + 1,
+                    _student.getIme(),
+                    _student.getPrezime());
         }
         System.out.print("Odabir >>> ");
         odabir = Integer.parseInt(scanner.nextLine());
-        student = studenti[odabir-1];
+        student = predmet.getStudentiList().get(odabir - 1);
 
-        System.out.print("Unesite ocjenu na ispitu (1-5): ");
-        ocjena = Integer.parseInt(scanner.nextLine());
+        ocjena = Unos.unosOcjene(scanner);
 
         System.out.print("Unesite datum i vrijeme ispita u formatu (dd.MM.yyy. HH:mm): ");
         datumIVrijeme = LocalDateTime.parse(scanner.nextLine(),
@@ -88,12 +94,20 @@ public final class Ispit implements Online{
         this.student = student;
     }
 
-    public Integer getOcjena() {
+    public Ocjena getOcjena() {
         return ocjena;
     }
 
-    public void setOcjena(Integer ocjena) {
+    public void setOcjena(Ocjena ocjena) {
         this.ocjena = ocjena;
+    }
+
+    public String getNazivSoftvera() {
+        return nazivSoftvera;
+    }
+
+    public void setNazivSoftvera(String nazivSoftvera) {
+        this.nazivSoftvera = nazivSoftvera;
     }
 
     public LocalDateTime getDatumIVrijeme() {

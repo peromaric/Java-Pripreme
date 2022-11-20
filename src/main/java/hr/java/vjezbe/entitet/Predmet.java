@@ -1,23 +1,24 @@
 package hr.java.vjezbe.entitet;
 
-import java.util.Scanner;
+import java.util.*;
 
-public class Predmet implements Unos{
+public class Predmet implements Unos {
 
     private String sifra;
     private String naziv;
     private Integer brojEctsBodova;
     private Profesor nositelj;
-    private Student[] studenti;
+    private Set<Student> studenti;
 
     public Predmet(String sifra, String naziv, Integer brojEctsBodova, Profesor nositelj) {
         this.sifra = sifra;
         this.naziv = naziv;
         this.brojEctsBodova = brojEctsBodova;
         this.nositelj = nositelj;
+        this.studenti = new HashSet<>();
     }
 
-    public static Predmet inputPredmet(Scanner scanner, Profesor[] profesori) {
+    public static Predmet inputPredmet(Scanner scanner, List<Profesor> profesori) {
         String sifra;
         String naziv;
         int brojEctsBodova;
@@ -35,33 +36,38 @@ public class Predmet implements Unos{
         );
 
         StringBuilder odabirProfesoraPorukaBuilder = new StringBuilder("Odaberite profesora:\n");
-        for (int i = 0; i < profesori.length; i++) {
-            odabirProfesoraPorukaBuilder.append(i+1).append(".");
-            odabirProfesoraPorukaBuilder.append(profesori[i].getIme()).append(" ");
-            odabirProfesoraPorukaBuilder.append(profesori[i].getPrezime()).append("\n");
+        int indexProfesora = 0;
+        for (Profesor profesor : profesori) {
+            odabirProfesoraPorukaBuilder.append(++indexProfesora).append(".");
+            odabirProfesoraPorukaBuilder.append(profesor.getIme()).append(" ");
+            odabirProfesoraPorukaBuilder.append(profesor.getPrezime()).append("\n");
         }
         String odabirProfesoraPoruka = odabirProfesoraPorukaBuilder.toString();
         int odabir = Unos.unosIntegera(scanner, odabirProfesoraPoruka);
-        nositelj = profesori[odabir-1];
+        nositelj = profesori.get(odabir - 1);
 
         return new Predmet(sifra, naziv, brojEctsBodova, nositelj);
     }
     
-    public void inputStudenti(Scanner scanner, Student[] sviStudenti) {
-        Student[] studenti = this.getStudenti();
-
+    public void inputStudenti(Scanner scanner, List<Student> sviStudenti) {
+        int brojStudenata = Unos.unosIntegera(
+                scanner,
+                "Unesite broj studenata na " + this.getNaziv()
+        );
         System.out.printf("Odaberite studente koji su upisali %s:\n", this.getNaziv());
-        for(int i = 0; i < studenti.length; i++) {
-            for(int j = 0; j < sviStudenti.length; j++) {
+        for(int i = 0; i < brojStudenata; i++) {
+            for(Student student : sviStudenti) {
                 System.out.printf("%d. %s %s\n",
-                        j + 1,
-                        sviStudenti[j].getIme(),
-                        sviStudenti[j].getPrezime()
+                        sviStudenti.indexOf(student) + 1,
+                        student.getIme(),
+                        student.getPrezime()
                 );
             }
-            System.out.print("Odabir >>> ");
-            int odabir = Integer.parseInt(scanner.nextLine());
-            studenti[i] = sviStudenti[odabir - 1];
+            int odabir = Unos.unosIntegera(
+                    scanner,
+                    ""
+            );
+            this.studenti.add(sviStudenti.get(odabir - 1));
         }
     }
 
@@ -97,11 +103,15 @@ public class Predmet implements Unos{
         this.nositelj = nositelj;
     }
 
-    public Student[] getStudenti() {
+    public Set<Student> getStudenti() {
         return studenti;
     }
 
-    public void setStudenti(Student[] studenti) {
+    public List<Student> getStudentiList() {
+        return studenti.stream().toList();
+    }
+
+    public void setStudenti(Set<Student> studenti) {
         this.studenti = studenti;
     }
 }
