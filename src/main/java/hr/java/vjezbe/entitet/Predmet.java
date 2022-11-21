@@ -1,5 +1,7 @@
 package hr.java.vjezbe.entitet;
 
+import hr.java.vjezbe.sortiranje.StudentSorter;
+
 import java.util.*;
 
 public class Predmet implements Unos {
@@ -69,6 +71,10 @@ public class Predmet implements Unos {
             );
             this.studenti.add(sviStudenti.get(odabir - 1));
         }
+    }
+
+    public List<Student> getSortedStudents() {
+        return getStudentiList().stream().sorted(new StudentSorter()).toList();
     }
 
     public String getSifra() {

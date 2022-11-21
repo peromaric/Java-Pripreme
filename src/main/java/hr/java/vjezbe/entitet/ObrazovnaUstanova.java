@@ -24,6 +24,50 @@ public abstract class ObrazovnaUstanova {
 
     public abstract Student odrediNajuspjesnijegStudentaNaGodini(Integer godina);
 
+    public void inputObrazovnaUstanova(Scanner scanner, int j) {
+
+        System.out.printf("Unesite naziv %d. obrazovne ustanove: ", j + 1);
+        String nazivObrazovneUstanove = scanner.nextLine();
+        this.setNaziv(nazivObrazovneUstanove);
+
+        int brojProfesora = Unos.unosIntegera(
+                scanner,
+                "Unesite broj profesora na " + this.getNaziv()
+        );
+        for(int i = 0; i < brojProfesora; i++) {
+            System.out.printf("Unos %d. profesora\n", i + 1);
+            profesori.add(Profesor.inputProfesor(scanner));
+        }
+
+        int brojStudenata = Unos.unosIntegera(
+                scanner,
+                "Unesite ukupan broj studenata na  " + this.getNaziv()
+        );
+        for(int i = 0; i < brojStudenata; i++) {
+            System.out.printf("Unesite %d. studenta\n", i + 1);
+            studenti.add(Student.inputStudent(scanner));
+        }
+
+        int brojPredmeta = Unos.unosIntegera(
+                scanner,
+                "Unesite ukupan broj predmeta na " + this.getNaziv()
+        );
+        for(int i = 0; i < brojPredmeta; i++) {
+            System.out.printf("Unos %d. predmeta\n", i + 1);
+            predmeti.add(Predmet.inputPredmet(scanner, profesori));
+            predmeti.get(i).inputStudenti(scanner, studenti);
+        }
+
+        int brojIspita = Unos.unosIntegera(
+                scanner,
+                "Unesite ukupan broj ispita na " + this.getNaziv()
+        );
+        for(int i = 0; i < brojIspita; i++) {
+            System.out.printf("Unos %d. ispitnog roka\n", i + 1);
+            ispiti.add(Ispit.inputIspit(scanner, predmeti));
+        }
+    }
+
     public String getNaziv() {
         return naziv;
     }

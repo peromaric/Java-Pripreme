@@ -19,7 +19,7 @@ public class Glavna implements Unos {
         List<ObrazovnaUstanova> obrazovneUstanove = new ArrayList<>();
 
         for(int j = 0; j < brojObrazovnihUstanova; j++) {
-
+            System.out.printf("Unesite podatke za %d. obrazovnu ustanovu\n", j + 1);
             ObrazovnaUstanova obrazovnaUstanova = null;
 
             int odabir = Unos.unosIntegera(
@@ -39,55 +39,15 @@ public class Glavna implements Unos {
                 }
             }
 
-            List<Profesor> profesori = obrazovnaUstanova.getProfesori();
-            List<Predmet> predmeti = obrazovnaUstanova.getPredmeti();
-            List<Ispit> ispiti = obrazovnaUstanova.getIspiti();
-            List<Student> studenti = obrazovnaUstanova.getStudenti();
-
-            System.out.printf("Unesite naziv %d. obrazovne ustanove: ", j + 1);
-            String nazivObrazovneUstanove = scanner.nextLine();
-            obrazovnaUstanova.setNaziv(nazivObrazovneUstanove);
-
-            System.out.printf("Unesite podatke za %d. obrazovnu ustanovu\n", j + 1);
-
-            int brojProfesora = Unos.unosIntegera(
-                    scanner,
-                    "Unesite broj profesora na " + obrazovnaUstanova.getNaziv()
-            );
-            for(int i = 0; i < brojProfesora; i++) {
-                System.out.printf("Unos %d. profesora\n", i + 1);
-                profesori.add(Profesor.inputProfesor(scanner));
-            }
-
-            int brojStudenata = Unos.unosIntegera(
-                    scanner,
-                    "Unesite ukupan broj studenata na  " + obrazovnaUstanova.getNaziv()
-            );
-            for(int i = 0; i < brojStudenata; i++) {
-                System.out.printf("Unesite %d. studenta\n", i + 1);
-                studenti.add(Student.inputStudent(scanner));
-            }
-
-            int brojPredmeta = Unos.unosIntegera(
-                    scanner,
-                    "Unesite ukupan broj predmeta na " + obrazovnaUstanova.getNaziv()
-            );
-            for(int i = 0; i < brojPredmeta; i++) {
-                System.out.printf("Unos %d. predmeta\n", i + 1);
-                predmeti.add(Predmet.inputPredmet(scanner, profesori));
-                predmeti.get(i).inputStudenti(scanner, studenti);
-            }
-
-            int brojIspita = Unos.unosIntegera(
-                    scanner,
-                    "Unesite ukupan broj ispita na " + obrazovnaUstanova.getNaziv()
-            );
-            for(int i = 0; i < brojIspita; i++) {
-                System.out.printf("Unos %d. ispitnog roka\n", i + 1);
-                ispiti.add(Ispit.inputIspit(scanner, predmeti));
-            }
-
+            obrazovnaUstanova.inputObrazovnaUstanova(scanner, j);
             obrazovneUstanove.add(obrazovnaUstanova);
+            System.out.println("Studenti pojedinih predmeta sortirani po imenima:");
+            for(Predmet predmet : obrazovnaUstanova.getPredmeti()) {
+                System.out.println("Studenti predmeta " + predmet.getNaziv());
+                for(Student student : predmet.getSortedStudents()) {
+                    System.out.printf("%s %s\n", student.getPrezime(), student.getIme());
+                }
+            }
         }
 
         for(ObrazovnaUstanova obrazovnaUstanova : obrazovneUstanove) {
