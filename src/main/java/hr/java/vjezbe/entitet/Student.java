@@ -2,6 +2,7 @@ package hr.java.vjezbe.entitet;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Student extends Osoba{
@@ -34,6 +35,19 @@ public class Student extends Osoba{
         datumRodjenja = LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("dd.MM.yyyy."));
 
         return new Student(ime, prezime, jmbag, datumRodjenja);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return jmbag.equals(student.jmbag) && datumRodjenja.equals(student.datumRodjenja);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jmbag, datumRodjenja);
     }
 
     public String getJmbag() {

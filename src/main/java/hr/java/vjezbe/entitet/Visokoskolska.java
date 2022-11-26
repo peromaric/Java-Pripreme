@@ -1,65 +1,60 @@
 package hr.java.vjezbe.entitet;
 
+import hr.java.vjezbe.iznimke.NemoguceOdreditiProsjekStudentaException;
+
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public interface Visokoskolska {
 
     BigDecimal izracunajKonacnuOcjenuStudijaZaStudenta(
-        Ispit[] ispitiStudenta,
-        int ocjenaZavrsnogRada,
-        int ocjenaObraneRada
-    );
+            List<Ispit> ispitiStudenta,
+            Student student,
+            Scanner scanner
+    ) throws NemoguceOdreditiProsjekStudentaException;
 
     void ispisiPodatkeOStudiju(Scanner scanner);
 
     default BigDecimal odrediProsjekOcjenaNaIspitima(
-            Ispit[] ispiti
-    ) {
-        Integer zbrojOcjena = 0;
-
-        Ispit[] polozeniIspiti = filtrirajPolozeneIspite(ispiti);
-        for(Ispit ispit : polozeniIspiti) {
-            zbrojOcjena += ispit.getOcjena();
-        }
-
-        return BigDecimal.valueOf(zbrojOcjena / ispiti.length);
-    }
-
-    private Ispit[] filtrirajPolozeneIspite(Ispit[] ispiti){
-        Ispit[] polozeniIspiti = new Ispit[0];
+            List<Ispit> ispiti
+    ) throws NemoguceOdreditiProsjekStudentaException {
+        int zbrojOcjena = 0;
 
         for(Ispit ispit : ispiti) {
-            if(ispit.getOcjena() > 1) {
-                polozeniIspiti = Arrays.copyOf(polozeniIspiti, polozeniIspiti.length + 1);
-                polozeniIspiti[polozeniIspiti.length - 1] = ispit;
+            if(ispit.getOcjena().compareTo(Ocjena.JEDAN) == 0) {
+                throw new NemoguceOdreditiProsjekStudentaException(
+                        "Nemoguće odrediti prosjek studenta!"
+                );
             }
+            zbrojOcjena += ispit.getOcjena().getOcjena();
         }
 
-        return polozeniIspiti;
+        return BigDecimal.valueOf(zbrojOcjena / ispiti.size());
     }
 
-    default Ispit[] filtrirajIspitePoGodini(Ispit[] ispiti, int godina){
-        Ispit[] ispitiTeGodine = new Ispit[0];
+    default List<Ispit> filtrirajIspitePoGodini(List<Ispit> ispiti, int godina) {
+        List<Ispit> ispitiTeGodine = new ArrayList<>();
 
         for(Ispit ispit : ispiti) {
             if(ispit.getDatumIVrijeme().getYear() == godina) {
-                ispitiTeGodine = Arrays.copyOf(ispitiTeGodine, ispitiTeGodine.length + 1);
-                ispitiTeGodine[ispitiTeGodine.length - 1] = ispit;
+                ispitiTeGodine.add(ispit);
             }
         }
 
         return ispitiTeGodine;
     }
 
-    default Ispit[] filtrirajIspitePoStudentu(Ispit[] ispiti, Student student) {
-        Ispit[] ispitiStudenta = new Ispit[0];
+    default List<Ispit> filtrirajIspitePoStudentu(
+            List<Ispit> ispiti,
+            Student student
+    ) {
+        List<Ispit> ispitiStudenta = new ArrayList<>();
 
         for(Ispit ispit : ispiti) {
-            if(ispit.getOcjena() > 1 && ispit.getStudent().getJmbag().equals(student.getJmbag())) {
-                ispitiStudenta = Arrays.copyOf(ispitiStudenta, ispitiStudenta.length + 1);
-                ispitiStudenta[ispitiStudenta.length - 1] = ispit;
+            if (ispit.getStudent().equals(student)) {
+                ispitiStudenta.add(ispit);
             }
         }
 
