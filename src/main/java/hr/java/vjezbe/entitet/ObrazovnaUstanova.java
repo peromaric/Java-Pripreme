@@ -68,6 +68,8 @@ public abstract class ObrazovnaUstanova {
         }
     }
 
+    public abstract void ispisiPodatkeOStudiju(Scanner scanner);
+
     public String getNaziv() {
         return naziv;
     }

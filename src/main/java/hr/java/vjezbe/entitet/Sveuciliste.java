@@ -2,6 +2,7 @@ package hr.java.vjezbe.entitet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Sveuciliste <T extends ObrazovnaUstanova> {
     List<T> obrazovneUstanove;
@@ -20,5 +21,11 @@ public class Sveuciliste <T extends ObrazovnaUstanova> {
 
     public List<T> getObrazovneUstanove() {
         return obrazovneUstanove;
+    }
+
+    public void ispisiPodatke(Scanner scanner) {
+        for (T obrazovnaUstanova : obrazovneUstanove) {
+            obrazovnaUstanova.ispisiPodatkeOStudiju(scanner);
+        }
     }
 }

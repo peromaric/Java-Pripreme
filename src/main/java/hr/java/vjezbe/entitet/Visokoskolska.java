@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 public interface Visokoskolska {
 
@@ -14,8 +15,6 @@ public interface Visokoskolska {
             Student student,
             Scanner scanner
     ) throws NemoguceOdreditiProsjekStudentaException;
-
-    void ispisiPodatkeOStudiju(Scanner scanner);
 
     default BigDecimal odrediProsjekOcjenaNaIspitima(
             List<Ispit> ispiti
@@ -51,6 +50,10 @@ public interface Visokoskolska {
             Student student
     ) {
         List<Ispit> ispitiStudenta = new ArrayList<>();
+
+        ispiti.stream()
+                .filter(ispit -> ispit.getStudent().equals(student))
+                .forEach(ispitiStudenta::add);
 
         for(Ispit ispit : ispiti) {
             if (ispit.getStudent().equals(student)) {
