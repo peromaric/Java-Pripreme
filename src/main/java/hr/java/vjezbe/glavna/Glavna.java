@@ -16,7 +16,7 @@ public class Glavna implements Unos {
         Scanner scanner = new Scanner(System.in);
 
         int brojObrazovnihUstanova = Unos.unosIntegera(scanner, "Unesite broj obrazovnih ustanova");
-        List<ObrazovnaUstanova> obrazovneUstanove = new ArrayList<>();
+        Sveuciliste<ObrazovnaUstanova> sveuciliste = new Sveuciliste<>();
 
         for(int j = 0; j < brojObrazovnihUstanova; j++) {
             System.out.printf("Unesite podatke za %d. obrazovnu ustanovu\n", j + 1);
@@ -40,7 +40,7 @@ public class Glavna implements Unos {
             }
 
             obrazovnaUstanova.inputObrazovnaUstanova(scanner, j);
-            obrazovneUstanove.add(obrazovnaUstanova);
+            sveuciliste.dodajObrazovnuUstanovu(obrazovnaUstanova);
             System.out.println("Studenti pojedinih predmeta sortirani po imenima:");
             for(Predmet predmet : obrazovnaUstanova.getPredmeti()) {
                 System.out.println("Studenti predmeta " + predmet.getNaziv());
@@ -50,17 +50,7 @@ public class Glavna implements Unos {
             }
         }
 
-        for(ObrazovnaUstanova obrazovnaUstanova : obrazovneUstanove) {
-            System.out.println("Podaci o " + obrazovnaUstanova.getNaziv());
-            if (obrazovnaUstanova instanceof FakultetRacunarstva) {
-                ((FakultetRacunarstva) obrazovnaUstanova).ispisiPodatkeOStudiju(scanner);
-            } else if (obrazovnaUstanova instanceof VeleucilisteJave) {
-                ((VeleucilisteJave) obrazovnaUstanova).ispisiPodatkeOStudiju(scanner);
-            }
-            else {
-                System.out.println("Nema unesenih obrazovnih ustanova");
-            }
-        }
+        sveuciliste.ispisiPodatke(scanner);
 
     }
 }
