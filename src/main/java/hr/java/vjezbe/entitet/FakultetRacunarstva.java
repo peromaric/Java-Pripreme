@@ -17,8 +17,15 @@ import java.util.Scanner;
 public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski, Unos {
     private static final Logger logger = LoggerFactory.getLogger(FakultetRacunarstva.class);
 
-    public FakultetRacunarstva() {
-        super();
+    public FakultetRacunarstva(
+            Long id,
+            String naziv,
+            List<Predmet> predmeti,
+            List<Profesor> profesori,
+            List<Student> studenti,
+            List<Ispit> ispiti
+    ) {
+        super(id, naziv, predmeti, profesori, studenti, ispiti);
     }
 
     /**
@@ -28,7 +35,7 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
      */
     @Override
     public Student odrediNajuspjesnijegStudentaNaGodini(Integer godina) {
-        Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
+        Student najuspjesnijiStudent = new Student(0L, "", "","", LocalDate.MIN);
 
         int najveciBrojIzvrsnoOcijenjenihIspita = 0;
         for(Student student : this.getStudenti()) {
@@ -76,7 +83,7 @@ public class FakultetRacunarstva extends ObrazovnaUstanova implements Diplomski,
      */
     @Override
     public Student odrediStudentaZaRektorovuNagradu() throws PostojiViseNajmladihStudenataException {
-        Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
+        Student najuspjesnijiStudent = new Student(0L, "", "", "", LocalDate.MIN);
         BigDecimal najboljiProsjek = BigDecimal.valueOf(0);
 
         for(Student student : this.getStudenti()) {

@@ -5,36 +5,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Student extends Osoba{
+public class Student extends Osoba {
 
     private String jmbag;
     private LocalDate datumRodjenja;
 
-    public Student(String ime, String prezime, String jmbag, LocalDate datumRodjenja) {
-        super(ime, prezime);
+    public Student(Long id, String ime, String prezime, String jmbag, LocalDate datumRodjenja) {
+        super(id, ime, prezime);
         this.jmbag = jmbag;
         this.datumRodjenja = datumRodjenja;
-    }
-
-    public static Student inputStudent(Scanner scanner) {
-        String ime;
-        String prezime;
-        String jmbag;
-        LocalDate datumRodjenja;
-
-        System.out.print("Unesite ime studenta: ");
-        ime = scanner.nextLine();
-
-        System.out.print("Unesite prezime studenta: ");
-        prezime = scanner.nextLine();
-
-        System.out.print("Unesite jmbag studenta: ");
-        jmbag = scanner.nextLine();
-
-        System.out.print("Unesite datum rodenja studenta u formatu (dd.MM.yyyy.): ");
-        datumRodjenja = LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("dd.MM.yyyy."));
-
-        return new Student(ime, prezime, jmbag, datumRodjenja);
     }
 
     @Override

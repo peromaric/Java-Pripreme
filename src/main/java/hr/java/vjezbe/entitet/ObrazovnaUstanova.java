@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public abstract class ObrazovnaUstanova {
+public abstract class ObrazovnaUstanova extends Entitet {
 
     private String naziv;
     private List<Predmet> predmeti;
@@ -15,58 +15,23 @@ public abstract class ObrazovnaUstanova {
     private List<Student> studenti;
     private List<Ispit> ispiti;
 
-    public ObrazovnaUstanova() {
-        profesori = new ArrayList<>();
-        predmeti = new ArrayList<>();
-        ispiti = new ArrayList<>();
-        studenti = new ArrayList<>();
+    public ObrazovnaUstanova(
+            Long id,
+            String naziv,
+            List<Predmet> predmeti,
+            List<Profesor> profesori,
+            List<Student> studenti,
+            List<Ispit> ispiti
+    ) {
+        super(id);
+        this.naziv = naziv;
+        this.predmeti = predmeti;
+        this.profesori = profesori;
+        this.studenti = studenti;
+        this.ispiti = ispiti;
     }
 
     public abstract Student odrediNajuspjesnijegStudentaNaGodini(Integer godina);
-
-    public void inputObrazovnaUstanova(Scanner scanner, int j) {
-
-        System.out.printf("Unesite naziv %d. obrazovne ustanove: ", j + 1);
-        String nazivObrazovneUstanove = scanner.nextLine();
-        this.setNaziv(nazivObrazovneUstanove);
-
-        int brojProfesora = Unos.unosIntegera(
-                scanner,
-                "Unesite broj profesora na " + this.getNaziv()
-        );
-        for(int i = 0; i < brojProfesora; i++) {
-            System.out.printf("Unos %d. profesora\n", i + 1);
-            profesori.add(Profesor.inputProfesor(scanner));
-        }
-
-        int brojStudenata = Unos.unosIntegera(
-                scanner,
-                "Unesite ukupan broj studenata na  " + this.getNaziv()
-        );
-        for(int i = 0; i < brojStudenata; i++) {
-            System.out.printf("Unesite %d. studenta\n", i + 1);
-            studenti.add(Student.inputStudent(scanner));
-        }
-
-        int brojPredmeta = Unos.unosIntegera(
-                scanner,
-                "Unesite ukupan broj predmeta na " + this.getNaziv()
-        );
-        for(int i = 0; i < brojPredmeta; i++) {
-            System.out.printf("Unos %d. predmeta\n", i + 1);
-            predmeti.add(Predmet.inputPredmet(scanner, profesori));
-            predmeti.get(i).inputStudenti(scanner, studenti);
-        }
-
-        int brojIspita = Unos.unosIntegera(
-                scanner,
-                "Unesite ukupan broj ispita na " + this.getNaziv()
-        );
-        for(int i = 0; i < brojIspita; i++) {
-            System.out.printf("Unos %d. ispitnog roka\n", i + 1);
-            ispiti.add(Ispit.inputIspit(scanner, predmeti));
-        }
-    }
 
     public abstract void ispisiPodatkeOStudiju(Scanner scanner);
 

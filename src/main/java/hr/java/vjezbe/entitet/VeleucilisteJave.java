@@ -15,8 +15,8 @@ import java.util.Scanner;
 public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska {
     private static final Logger logger = LoggerFactory.getLogger(VeleucilisteJave.class);
 
-    public VeleucilisteJave() {
-        super();
+    public VeleucilisteJave(Long id, String naziv, List<Predmet> predmeti, List<Profesor> profesori, List<Student> studenti, List<Ispit> ispiti) {
+        super(id, naziv, predmeti, profesori, studenti, ispiti);
     }
 
     /**
@@ -26,7 +26,7 @@ public class VeleucilisteJave extends ObrazovnaUstanova implements Visokoskolska
      */
     @Override
     public Student odrediNajuspjesnijegStudentaNaGodini(Integer godina) {
-        Student najuspjesnijiStudent = new Student("", "", "", LocalDate.MIN);
+        Student najuspjesnijiStudent = new Student(0L, "", "", "", LocalDate.MIN);
         BigDecimal najboljiProsjek = BigDecimal.valueOf(0);
 
         for(Student student : this.getStudenti()) {

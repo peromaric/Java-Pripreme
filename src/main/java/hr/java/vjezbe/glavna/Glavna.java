@@ -13,7 +13,7 @@ public class Glavna implements Unos {
     private static final Logger logger = LoggerFactory.getLogger(Glavna.class);
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        /*Scanner scanner = new Scanner(System.in);
 
         int brojObrazovnihUstanova = Unos.unosIntegera(scanner, "Unesite broj obrazovnih ustanova");
         Sveuciliste<ObrazovnaUstanova> sveuciliste = new Sveuciliste<>();
@@ -50,7 +50,7 @@ public class Glavna implements Unos {
             }
         }
 
-        sveuciliste.ispisiPodatke(scanner);
+        sveuciliste.ispisiPodatke(scanner);*/
 
     }
 }

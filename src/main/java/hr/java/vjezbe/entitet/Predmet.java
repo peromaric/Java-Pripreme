@@ -20,59 +20,6 @@ public class Predmet implements Unos {
         this.studenti = new HashSet<>();
     }
 
-    public static Predmet inputPredmet(Scanner scanner, List<Profesor> profesori) {
-        String sifra;
-        String naziv;
-        int brojEctsBodova;
-        Profesor nositelj;
-
-        System.out.print("Unesite šifru predmeta: ");
-        sifra = scanner.nextLine();
-
-        System.out.print("Unesite naziv predmeta: ");
-        naziv = scanner.nextLine();
-
-        brojEctsBodova = Unos.unosIntegera(
-                scanner,
-                "Unesite broj ECTS-a za predmet " + naziv
-        );
-
-        StringBuilder odabirProfesoraPorukaBuilder = new StringBuilder("Odaberite profesora:\n");
-        int indexProfesora = 0;
-        for (Profesor profesor : profesori) {
-            odabirProfesoraPorukaBuilder.append(++indexProfesora).append(".");
-            odabirProfesoraPorukaBuilder.append(profesor.getIme()).append(" ");
-            odabirProfesoraPorukaBuilder.append(profesor.getPrezime()).append("\n");
-        }
-        String odabirProfesoraPoruka = odabirProfesoraPorukaBuilder.toString();
-        int odabir = Unos.unosIntegera(scanner, odabirProfesoraPoruka);
-        nositelj = profesori.get(odabir - 1);
-
-        return new Predmet(sifra, naziv, brojEctsBodova, nositelj);
-    }
-    
-    public void inputStudenti(Scanner scanner, List<Student> sviStudenti) {
-        int brojStudenata = Unos.unosIntegera(
-                scanner,
-                "Unesite broj studenata na " + this.getNaziv()
-        );
-        System.out.printf("Odaberite studente koji su upisali %s:\n", this.getNaziv());
-        for(int i = 0; i < brojStudenata; i++) {
-            for(Student student : sviStudenti) {
-                System.out.printf("%d. %s %s\n",
-                        sviStudenti.indexOf(student) + 1,
-                        student.getIme(),
-                        student.getPrezime()
-                );
-            }
-            int odabir = Unos.unosIntegera(
-                    scanner,
-                    ""
-            );
-            this.studenti.add(sviStudenti.get(odabir - 1));
-        }
-    }
-
     public List<Student> getSortedStudents() {
         return getStudentiList().stream().sorted(new StudentSorter()).toList();
     }
